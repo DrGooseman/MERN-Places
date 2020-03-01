@@ -10,6 +10,7 @@ import NewPlace from "./places/pages/NewPlace";
 import UserPlaces from "./places/pages/UserPlaces";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import UpdatePlace from "./places/pages/UpdatePlace";
+import Login from "./user/pages/Login";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
           </Route>
           <Route path="/:userId/places" exact>
             <UserPlaces />
+          </Route>
+          <Route path="/login" exact>
+            <Login />
           </Route>
           <Route path="/places/new" exact>
             <NewPlace />
