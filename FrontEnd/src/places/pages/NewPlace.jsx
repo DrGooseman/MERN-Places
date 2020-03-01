@@ -6,31 +6,12 @@ import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH
 } from "./../../shared/components/util/validators";
-import "./NewPlace.css";
-
-function formReducer(state, action) {
-  switch (action.type) {
-    case "INPUT_CHANGE":
-      let formIsValid = true;
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId)
-          formIsValid = formIsValid && action.isValid;
-        else formIsValid = formIsValid && state.inputs[inputId].isValid;
-      }
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: { value: action.value, isValid: action.isValid }
-        },
-        isValid: formIsValid
-      };
-  }
-}
+import { useForm } from "../../shared/components/hooks/form-hook";
+import "./PlaceForm.css";
 
 function NewPlace() {
-  const [formState, dispatch] = useReducer(formReducer, {
-    inputs: {
+  const [formState, inputHandler] = useForm(
+    {
       title: {
         value: "",
         isValid: false
@@ -38,19 +19,14 @@ function NewPlace() {
       description: {
         value: "",
         isValid: false
+      },
+      address: {
+        value: "",
+        isValid: false
       }
     },
-    isValid: false
-  });
-
-  const inputHandler = useCallback((id, value, isValid) => {
-    dispatch({
-      type: "INPUT_CHANGE",
-      value: value,
-      isValid: isValid,
-      inputId: id
-    });
-  }, []);
+    false
+  );
 
   function placeSubmitHander(event) {
     event.preventDefault();
@@ -75,6 +51,14 @@ function NewPlace() {
         validators={[VALIDATOR_MINLENGTH(5)]}
         onInput={inputHandler}
         errorText="Please enter a valid description (at least 5 characters)."
+      />
+      <Input
+        id="address"
+        label="Address"
+        element="input"
+        validators={[VALIDATOR_REQUIRE()]}
+        onInput={inputHandler}
+        errorText="Please enter a valid address."
       />
       <Button type="submit" disabled={!formState.isValid}>
         ADD PLACE
