@@ -2,15 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
-const DUMMY_USERS = [
-  {
-    id: "1",
-    name: "Jim"
-  }
-];
+const { getUsers, login, signUp } = require("../controllers/users-controller");
 
-router.get("/", (req, res, next) => {
-  res.json({ DUMMY_USERS });
-});
+router.get("/", getUsers);
+
+router.post("/signup", signUp);
+
+router.post("/login", login);
 
 module.exports = router;
