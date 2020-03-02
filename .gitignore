@@ -15,6 +15,7 @@
 
 # misc
 /FrontEnd/.env*
+/BackEnd/.env*
 .DS_Store
 .env.local
 .env.development.local
