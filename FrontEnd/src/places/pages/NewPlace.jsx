@@ -7,9 +7,12 @@ import {
   VALIDATOR_MINLENGTH
 } from "./../../shared/components/util/validators";
 import { useForm } from "../../shared/components/hooks/form-hook";
+import { useHttpClient } from "../../shared/components/hooks/http-hook";
 import "./PlaceForm.css";
 
 function NewPlace() {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const [formState, inputHandler] = useForm(
     {
       title: {
