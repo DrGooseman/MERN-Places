@@ -64,7 +64,10 @@ async function login(req, res, next) {
   if (!foundUser || foundUser.password != password)
     return next(new HttpError("Email or password is incorrect.", 401));
 
-  res.json({ message: "Logged in!" });
+  res.json({
+    message: "Logged in!",
+    user: foundUser.toObject({ getters: true })
+  });
 }
 
 exports.getUsers = getUsers;

@@ -53,7 +53,7 @@ function Login() {
 
     if (isLoginMode) {
       try {
-        await sendRequest(
+        const responseData = await sendRequest(
           "http://localhost:5000/api/users/login",
           "POST",
           JSON.stringify({
@@ -63,11 +63,11 @@ function Login() {
           { "Content-Type": "application/json" }
         );
 
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (err) {}
     } else {
       try {
-        await fetch(
+        const responseData = await sendRequest(
           "http://localhost:5000/api/users/signUp",
           "POST",
           JSON.stringify({
@@ -78,7 +78,7 @@ function Login() {
           { "Content-Type": "application/json" }
         );
 
-        auth.login();
+        auth.login(responseData.user.id);
       } catch (err) {}
     }
   }
