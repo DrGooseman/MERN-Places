@@ -26,7 +26,7 @@ router.post(
   ],
   createPlace
 );
-router.post(
+router.patch(
   "/:pid",
   [
     check("title")
