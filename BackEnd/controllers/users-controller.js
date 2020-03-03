@@ -39,7 +39,7 @@ async function signUp(req, res, next) {
     email,
     password,
     image: "agaegaeg",
-    places: "ateat"
+    places: []
   });
 
   try {
