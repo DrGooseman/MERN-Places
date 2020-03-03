@@ -2,20 +2,20 @@ const uuid = require("uuid/v4");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 
-const DUMMY_USERS = [
-  {
-    id: "1",
-    username: "Jim",
-    email: "jim@jim.com",
-    password: "password"
-  }
-];
+const User = require("../models/user");
 
-function getUsers(req, res, next) {
-  res.json({ users: DUMMY_USERS });
+async function getUsers(req, res, next) {
+  let users;
+  try {
+    users = await User.find({}, "-password");
+  } catch (err) {
+    return next(new HttpError("Fetching users failed, please try again.", 500));
+  }
+
+  res.json({ users: users.map(user => user.toObject({ getters: true })) });
 }
 
-function signUp(req, res, next) {
+async function signUp(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return next(
@@ -24,19 +24,42 @@ function signUp(req, res, next) {
 
   const { username, email, password } = req.body;
 
-  const hasUser = DUMMY_USERS.find(u => u.email === email);
-  if (hasUser)
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (err) {
+    return next(new HttpError("User creation failed, please try again.", 500));
+  }
+
+  if (existingUser)
     return next(new HttpError("User with this email already exists.", 422));
 
-  const newUser = { id: uuid(), username, email, password };
-  DUMMY_USERS.push(newUser);
-  res.status(201).json({ user: newUser });
+  const newUser = new User({
+    username,
+    email,
+    password,
+    image: "agaegaeg",
+    places: "ateat"
+  });
+
+  try {
+    await newUser.save();
+  } catch (err) {
+    return next(new HttpError("User creation failed, please try again.", 500));
+  }
+
+  res.status(201).json({ user: newUser.toObject({ getters: true }) });
 }
 
-function login(req, res, next) {
+async function login(req, res, next) {
   const { email, password } = req.body;
 
-  const foundUser = DUMMY_USERS.find(p => p.email === email);
+  let foundUser;
+  try {
+    foundUser = await User.findOne({ email });
+  } catch (err) {
+    return next(new HttpError("Login failed, please try again later.", 500));
+  }
 
   if (!foundUser || foundUser.password != password)
     return next(new HttpError("Email or password is incorrect.", 401));
