@@ -38,7 +38,7 @@ async function signUp(req, res, next) {
     username,
     email,
     password,
-    image: "agaegaeg",
+    image: req.file.path,
     places: []
   });
 

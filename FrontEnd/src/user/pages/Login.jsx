@@ -72,15 +72,15 @@ function Login() {
       } catch (err) {}
     } else {
       try {
+        const formData = new FormData();
+        formData.append("email", formState.inputs.email.value);
+        formData.append("username", formState.inputs.username.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
         const responseData = await sendRequest(
           "http://localhost:5000/api/users/signUp",
           "POST",
-          JSON.stringify({
-            username: formState.inputs.username.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value
-          }),
-          { "Content-Type": "application/json" }
+          formData
         );
 
         auth.login(responseData.user.id);

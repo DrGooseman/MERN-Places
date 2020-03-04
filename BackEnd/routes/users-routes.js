@@ -5,18 +5,21 @@ const router = express.Router();
 
 const { getUsers, login, signUp } = require("../controllers/users-controller");
 
+const fileUpload = require("../middleware/file-upload");
+
 router.get("/", getUsers);
 
 router.post(
   "/signup",
+  fileUpload.single("image"),
   [
-    check("username")
+    (check("username")
       .not()
       .isEmpty(),
     check("email")
       .normalizeEmail()
       .isEmail(),
-    check("password").isLength({ min: 6 })
+    check("password").isLength({ min: 6 }))
   ],
   signUp
 );
