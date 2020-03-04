@@ -12,6 +12,7 @@ import {
 import { useForm } from "../../shared/components/hooks/form-hook";
 import { useHttpClient } from "../../shared/components/hooks/http-hook";
 import { AuthContext } from "./../../shared/context/auth-context";
+import ImageUpload from "./../../shared/components/FormElements/ImageUpload";
 import "./PlaceForm.css";
 
 function NewPlace() {
@@ -32,6 +33,10 @@ function NewPlace() {
       address: {
         value: "",
         isValid: false
+      },
+      image: {
+        value: null,
+        isValid: false
       }
     },
     false
@@ -40,17 +45,13 @@ function NewPlace() {
   async function placeSubmitHander(event) {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId
-        }),
-        { "Content-Type": "application/json" }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+      await sendRequest("http://localhost:5000/api/places", "POST", formData);
       history.push("/");
     } catch (err) {}
   }
@@ -84,6 +85,11 @@ function NewPlace() {
           validators={[VALIDATOR_REQUIRE()]}
           onInput={inputHandler}
           errorText="Please enter a valid address."
+        />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image"
         />
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE

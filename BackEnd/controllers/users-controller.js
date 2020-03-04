@@ -1,4 +1,5 @@
 const uuid = require("uuid/v4");
+const bcrypt = require("bcryptjs");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 
@@ -34,10 +35,17 @@ async function signUp(req, res, next) {
   if (existingUser)
     return next(new HttpError("User with this email already exists.", 422));
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt(password, 10);
+  } catch (err) {
+    next(new HttpError("User creation failed, please try again.", 500));
+  }
+
   const newUser = new User({
     username,
     email,
-    password,
+    password: hashedPassword,
     image: req.file.path,
     places: []
   });

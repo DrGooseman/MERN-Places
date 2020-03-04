@@ -108,7 +108,12 @@ function Login() {
             />
           )}
           {!isLoginMode && (
-            <ImageUpload id="image" onInput={inputHandler} center />
+            <ImageUpload
+              id="image"
+              onInput={inputHandler}
+              errorText="Please provide an image"
+              center
+            />
           )}
           <Input
             id="email"

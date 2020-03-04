@@ -1,6 +1,7 @@
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const fs = require("fs");
 
 const getCoordsForAddress = require("../util/location");
 const Place = require("../models/place");
@@ -38,10 +39,10 @@ async function getPlacesByUser(req, res, next) {
     );
   }
 
-  if (places.length === 0)
-    return next(
-      new HttpError("Could not find any places for the provided user.", 404)
-    );
+  // if (places.length === 0)
+  //  return next(
+  //    new HttpError("Could not find any places for the provided user.", 404)
+  //  );
 
   res.json({ places: places.map(place => place.toObject({ getters: true })) });
 }
@@ -67,7 +68,7 @@ async function createPlace(req, res, next) {
     description,
     address,
     location: coordinates,
-    image: "afea",
+    image: req.file.path,
     creator
   });
 
@@ -83,6 +84,8 @@ async function createPlace(req, res, next) {
       new HttpError("Could not find a user for the provided id.", 404)
     );
 
+  const imagePath = place.image;
+
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -93,6 +96,10 @@ async function createPlace(req, res, next) {
   } catch (err) {
     return next(new HttpError("Place creation failed, please try again.", 500));
   }
+
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
 
   res.status(201).json({ place: newPlace });
 }

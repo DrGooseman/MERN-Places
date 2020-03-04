@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 
 import PlaceList from "../components/PlaceList";
 import { useHttpClient } from "../../shared/components/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import { AuthContext } from "./../../shared/context/auth-context";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
 function UserPlaces() {
+  const auth = useContext(AuthContext);
   const [loadedPlaces, setLoadedPlaces] = useState();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
@@ -42,6 +44,7 @@ function UserPlaces() {
         <PlaceList
           onDeletePlace={deletePlaceHandler}
           items={loadedPlaces.filter(place => place.creator === userId)}
+          isCurrentUser={auth.userId === userId}
         />
       )}
     </React.Fragment>
