@@ -11,9 +11,10 @@ import {
 } from "../../shared/components/util/validators";
 import { useForm } from "../../shared/components/hooks/form-hook";
 import { useHttpClient } from "../../shared/components/hooks/http-hook";
-import "./Auth.css";
 import Card from "../../shared/components/UIElements/Card";
 import { AuthContext } from "./../../shared/context/auth-context";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+import "./Auth.css";
 
 function Login() {
   const auth = useContext(AuthContext);
@@ -37,12 +38,16 @@ function Login() {
   function switchModeHandler() {
     if (!isLoginMode)
       setFormData(
-        { ...formState.inputs, username: undefined },
+        { ...formState.inputs, username: undefined, image: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     else
       setFormData(
-        { ...formState.inputs, username: { value: "", isValid: false } },
+        {
+          ...formState.inputs,
+          username: { value: "", isValid: false },
+          image: { value: null, isValid: false }
+        },
         false
       );
     setIsLoginMode(prevMode => !prevMode);
@@ -101,6 +106,9 @@ function Login() {
               onInput={inputHandler}
               errorText="Please enter a valid username."
             />
+          )}
+          {!isLoginMode && (
+            <ImageUpload id="image" onInput={inputHandler} center />
           )}
           <Input
             id="email"
