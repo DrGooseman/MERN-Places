@@ -113,12 +113,12 @@ function Login() {
           />
           <Input
             id="password"
-            type="text"
+            type="password"
             label="Password"
             element="input"
-            validators={[VALIDATOR_MINLENGTH(5)]}
+            validators={[VALIDATOR_MINLENGTH(6)]}
             onInput={inputHandler}
-            errorText="Please enter a valid password (at least 5 characters)."
+            errorText="Please enter a valid password (at least 6 characters)."
           />
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "LOGIN" : "REGISTER"}
