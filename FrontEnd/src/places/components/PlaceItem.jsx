@@ -34,7 +34,11 @@ function PlaceItem(props) {
     try {
       const responseData = await sendRequest(
         `http://localhost:5000/api/places/${props.id}`,
-        "DELETE"
+        "DELETE",
+        null,
+        {
+          authorization: "Bearer " + auth.token
+        }
       );
       props.onDelete(props.id);
     } catch (err) {}

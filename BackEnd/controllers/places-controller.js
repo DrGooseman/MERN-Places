@@ -84,8 +84,6 @@ async function createPlace(req, res, next) {
       new HttpError("Could not find a user for the provided id.", 404)
     );
 
-  const imagePath = place.image;
-
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -96,10 +94,6 @@ async function createPlace(req, res, next) {
   } catch (err) {
     return next(new HttpError("Place creation failed, please try again.", 500));
   }
-
-  fs.unlink(imagePath, err => {
-    console.log(err);
-  });
 
   res.status(201).json({ place: newPlace });
 }
@@ -166,6 +160,12 @@ async function deletePlace(req, res, next) {
       new HttpError("Something went wrong, could not delete the place", 500)
     );
   }
+
+  const imagePath = place.image;
+
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Place deleted." });
 }

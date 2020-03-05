@@ -73,7 +73,10 @@ function UpdatePlace() {
           title: formState.inputs.title.value,
           description: formState.inputs.description.value
         }),
-        { "Content-Type": "application/json" }
+        {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + auth.token
+        }
       );
       history.push("/" + auth.userId + "/places");
     } catch (err) {}

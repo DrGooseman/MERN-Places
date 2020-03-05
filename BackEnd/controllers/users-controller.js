@@ -1,5 +1,5 @@
-const uuid = require("uuid/v4");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 
@@ -37,7 +37,7 @@ async function signUp(req, res, next) {
 
   let hashedPassword;
   try {
-    hashedPassword = await bcrypt(password, 10);
+    hashedPassword = await bcrypt.hash(password, 10);
   } catch (err) {
     next(new HttpError("User creation failed, please try again.", 500));
   }
@@ -56,7 +56,18 @@ async function signUp(req, res, next) {
     return next(new HttpError("User creation failed, please try again.", 500));
   }
 
-  res.status(201).json({ user: newUser.toObject({ getters: true }) });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: newUser.id, email: newUser.email },
+      process.env.JWT_PRIVATE_KEY,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return next(new HttpError("User creation failed, please try again.", 500));
+  }
+
+  res.status(201).json({ userId: newUser.id, email: newUser.email, token });
 }
 
 async function login(req, res, next) {
@@ -69,12 +80,34 @@ async function login(req, res, next) {
     return next(new HttpError("Login failed, please try again later.", 500));
   }
 
-  if (!foundUser || foundUser.password != password)
+  if (!foundUser)
     return next(new HttpError("Email or password is incorrect.", 401));
 
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, foundUser.password);
+  } catch (err) {
+    return next(new HttpError("Login failed, please try again later.", 500));
+  }
+
+  if (!isValidPassword)
+    return next(new HttpError("Email or password is incorrect.", 401));
+
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: foundUser.id, email: foundUser.email },
+      process.env.JWT_PRIVATE_KEY,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return next(new HttpError("Login failed, please try again.", 500));
+  }
+
   res.json({
-    message: "Logged in!",
-    user: foundUser.toObject({ getters: true })
+    userId: foundUser.id,
+    email: foundUser.email,
+    token
   });
 }
 
