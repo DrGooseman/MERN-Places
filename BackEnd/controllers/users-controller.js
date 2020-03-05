@@ -81,7 +81,7 @@ async function login(req, res, next) {
   }
 
   if (!foundUser)
-    return next(new HttpError("Email or password is incorrect.", 401));
+    return next(new HttpError("Email or password is incorrect.", 403));
 
   let isValidPassword = false;
   try {
@@ -91,7 +91,7 @@ async function login(req, res, next) {
   }
 
   if (!isValidPassword)
-    return next(new HttpError("Email or password is incorrect.", 401));
+    return next(new HttpError("Email or password is incorrect.", 403));
 
   let token;
   try {

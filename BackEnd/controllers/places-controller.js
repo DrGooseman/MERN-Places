@@ -119,6 +119,10 @@ async function updatePlace(req, res, next) {
 
   if (!place) return next(new HttpError("Place could not be found.", 404));
 
+  if (place.creator.toString() !== req.userData.userId) {
+    return next(new HttpError("You are not allowed to edit this place.", 401));
+  }
+
   place.title = title;
   place.description = description;
 
@@ -147,6 +151,12 @@ async function deletePlace(req, res, next) {
 
   if (!place)
     return next(new HttpError("Could not find a place for this id.", 404));
+
+  if (place.creator.id !== req.userData.userId) {
+    return next(
+      new HttpError("You are not allowed to delete this place.", 401)
+    );
+  }
 
   try {
     const session = await mongoose.startSession();
