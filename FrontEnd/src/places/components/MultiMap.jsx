@@ -14,6 +14,15 @@ function MultiMap(props) {
     });
 
     places.forEach(place => {
+      var infowindow = new window.google.maps.InfoWindow({
+        content: `<div class="multi-map-popup"><img class="multi-map-image"
+        src=${process.env.REACT_APP_ASSET_URL + place.image}
+        alt=${place.title}
+      />
+      <h1>${place.title}</h1>
+      <p>${place.description}</p></div>`
+      });
+
       var icon = {
         url: getImage(place.creator), // url
         scaledSize: new window.google.maps.Size(50, 50), // scaled size
@@ -22,10 +31,13 @@ function MultiMap(props) {
         anchor: new window.google.maps.Point(15, 15)
       };
 
-      new window.google.maps.Marker({
+      const marker = new window.google.maps.Marker({
         position: place.location,
         icon,
         map
+      });
+      marker.addListener("click", function() {
+        infowindow.open(map, marker);
       });
     });
   }, [center, zoom]);

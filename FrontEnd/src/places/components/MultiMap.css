@@ -7,3 +7,17 @@
   width: 100vw;
   height: 100vh;
 }
+
+.multi-map-popup {
+  width: 14rem;
+}
+
+.multi-map-popup h1,
+p {
+  margin: 4px 0px;
+}
+
+.multi-map-image {
+  width: 14rem;
+  height: 10rem;
+}
