@@ -15,6 +15,7 @@ import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/components/hooks/auth-hook";
 
 // const Users = React.lazy(()=>import("./user/pages/Users"));
+import PlacesMap from "./places/pages/PlacesMap";
 
 function App() {
   const { token, login, logout, userId } = useAuth();
@@ -26,10 +27,13 @@ function App() {
       <Switch>
         <Route path="/" exact>
           <Users />
-        </Route>{" "}
+        </Route>
         <Route path="/:userId/places" exact>
           <UserPlaces />
-        </Route>{" "}
+        </Route>
+        <Route path="/places/map" exact>
+          <PlacesMap />
+        </Route>
         <Route path="/places/new" exact>
           <NewPlace />
         </Route>
@@ -42,16 +46,18 @@ function App() {
   } else {
     routes = (
       <Switch>
-        {" "}
         <Route path="/" exact>
           <Users />
-        </Route>{" "}
+        </Route>
         <Route path="/:userId/places" exact>
           <UserPlaces />
-        </Route>{" "}
+        </Route>
+        <Route path="/places/map" exact>
+          <PlacesMap />
+        </Route>
         <Route path="/login" exact>
           <Login />
-        </Route>{" "}
+        </Route>
         <Redirect to="/login" />
       </Switch>
     );

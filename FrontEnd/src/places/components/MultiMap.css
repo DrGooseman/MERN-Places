@@ -1,0 +1,9 @@
+.multi-map {
+  width: 100%;
+  height: 100%;
+}
+
+.multi-map-container {
+  width: 100vw;
+  height: 100vh;
+}

@@ -9,6 +9,24 @@ const getCoordsForAddress = require("../util/location");
 const Place = require("../models/place");
 const User = require("../models/user");
 
+async function getPlaces(req, res, next) {
+  let places;
+  try {
+    places = await Place.find();
+  } catch (err) {
+    return next(
+      new HttpError("Something went wrong, could not fetch places", 500)
+    );
+  }
+
+  if (!places)
+    return next(
+      new HttpError("Something went wrong, could not fetch places", 404)
+    );
+
+  res.json({ places: places.map(place => place.toObject({ getters: true })) });
+}
+
 async function getPlaceById(req, res, next) {
   const placeId = req.params.pid;
 
@@ -194,6 +212,7 @@ async function deletePlace(req, res, next) {
   res.status(200).json({ message: "Place deleted." });
 }
 
+exports.getPlaces = getPlaces;
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUser = getPlacesByUser;
 exports.createPlace = createPlace;
