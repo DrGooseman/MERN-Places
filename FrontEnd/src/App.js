@@ -14,6 +14,8 @@ import Login from "./user/pages/Login";
 import { AuthContext } from "./shared/context/auth-context";
 import { useAuth } from "./shared/components/hooks/auth-hook";
 
+// const Users = React.lazy(()=>import("./user/pages/Users"));
+
 function App() {
   const { token, login, logout, userId } = useAuth();
 

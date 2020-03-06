@@ -59,7 +59,7 @@ function Login() {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/login",
+          process.env.REACT_APP_BACKEND_URL + "/users/login",
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
@@ -78,7 +78,7 @@ function Login() {
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/signUp",
+          process.env.REACT_APP_BACKEND_URL + "/users/signUp",
           "POST",
           formData
         );
@@ -100,7 +100,7 @@ function Login() {
             <Input
               id="username"
               type="text"
-              label="Username"
+              label="Name"
               element="input"
               validators={[VALIDATOR_REQUIRE()]}
               onInput={inputHandler}

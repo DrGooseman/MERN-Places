@@ -35,6 +35,8 @@ router.post(
 );
 router.patch(
   "/:pid",
+  fileUpload.single("image"),
+
   [
     check("title")
       .not()

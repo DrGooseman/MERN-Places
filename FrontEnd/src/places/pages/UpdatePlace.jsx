@@ -14,6 +14,7 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "./../../shared/context/auth-context";
 import "./PlaceForm.css";
+import ImageUpload from "./../../shared/components/FormElements/ImageUpload";
 
 function UpdatePlace() {
   const [loadedPlace, setLoadedPlace] = useState();
@@ -30,6 +31,10 @@ function UpdatePlace() {
       description: {
         value: "",
         isValid: false
+      },
+      image: {
+        value: null,
+        isValid: false
       }
     },
     true
@@ -41,9 +46,9 @@ function UpdatePlace() {
     const fetchPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          process.env.REACT_APP_BACKEND_URL + `/places/${placeId}`
         );
-        console.log(responseData.place);
+
         setLoadedPlace(responseData.place);
         setFormData(
           {
@@ -53,6 +58,10 @@ function UpdatePlace() {
             },
             description: {
               value: responseData.place.description,
+              isValid: true
+            },
+            image: {
+              value: responseData.place.image,
               isValid: true
             }
           },
@@ -66,15 +75,16 @@ function UpdatePlace() {
   async function updateSubmitHandler(event) {
     event.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      if (formState.inputs.image)
+        formData.append("image", formState.inputs.image.value);
       const responseData = await sendRequest(
-        `http://localhost:5000/api/places/${placeId}`,
+        process.env.REACT_APP_BACKEND_URL + `/places/${placeId}`,
         "PATCH",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value
-        }),
+        formData,
         {
-          "Content-Type": "application/json",
           authorization: "Bearer " + auth.token
         }
       );
@@ -121,6 +131,13 @@ function UpdatePlace() {
           errorText={"Please enter a valid description"}
           onInput={inputHandler}
           initialValue={loadedPlace.description}
+          initialIsValid={true}
+        />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image"
+          initialValue={loadedPlace.image}
           initialIsValid={true}
         />
         <Button type="sumbit" disabled={!formState.isValid}>

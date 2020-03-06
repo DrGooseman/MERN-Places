@@ -2,6 +2,8 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 const fs = require("fs");
+const deleteFile = require("../util/delete-file");
+//const uploadFile = require("upload-file");
 
 const getCoordsForAddress = require("../util/location");
 const Place = require("../models/place");
@@ -54,7 +56,7 @@ async function createPlace(req, res, next) {
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address } = req.body;
 
   let coordinates;
   try {
@@ -63,18 +65,20 @@ async function createPlace(req, res, next) {
     return next(error);
   }
 
+  //uploadFile(req.file, req.fule)
+
   const newPlace = new Place({
     title,
     description,
     address,
     location: coordinates,
-    image: req.file.path,
-    creator
+    image: req.file.key,
+    creator: req.userData.userId
   });
 
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (err) {
     return next(new HttpError("Place creation failed, please try again.", 500));
   }
@@ -126,6 +130,12 @@ async function updatePlace(req, res, next) {
   place.title = title;
   place.description = description;
 
+  let oldPlaceKey;
+  if (req.file) {
+    oldPlaceKey = place.image;
+    place.image = req.file.key;
+  }
+
   try {
     await place.save();
   } catch (err) {
@@ -133,6 +143,8 @@ async function updatePlace(req, res, next) {
       new HttpError("Something went wrong, could not update the place", 500)
     );
   }
+
+  if (oldPlaceKey) deleteFile(oldPlaceKey);
 
   res.status(200).json({ place: place.toObject({ getters: true }) });
 }
@@ -171,11 +183,13 @@ async function deletePlace(req, res, next) {
     );
   }
 
-  const imagePath = place.image;
+  deleteFile(place.image);
 
-  fs.unlink(imagePath, err => {
-    console.log(err);
-  });
+  // const imagePath = place.image;
+
+  // fs.unlink(imagePath, err => {
+  //   console.log(err);
+  // });
 
   res.status(200).json({ message: "Place deleted." });
 }

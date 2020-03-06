@@ -4,9 +4,9 @@ import Button from "./Button";
 import "./ImageUpload.css";
 
 function ImageUpload(props) {
-  const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState();
-  const [isValid, setIsValid] = useState();
+  const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isValid, setIsValid] = useState(props.initialIsValid || false);
 
   const filePickerRef = useRef();
 
@@ -25,6 +25,11 @@ function ImageUpload(props) {
     setIsValid(fileIsValid);
     props.onInput(props.id, pickedFile, fileIsValid);
   }
+
+  useEffect(() => {
+    if (props.initialValue)
+      setPreviewUrl(process.env.REACT_APP_ASSET_URL + props.initialValue);
+  }, []);
 
   useEffect(() => {
     if (!file) return;
