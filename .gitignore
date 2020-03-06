@@ -12,6 +12,7 @@
 
 # production
 /build
+FrontEnd/build
 
 # misc
 /FrontEnd/.env*
@@ -21,6 +22,11 @@
 .env.development.local
 .env.test.local
 .env.production.local
+
+/FrontEnd/.env.local
+/FrontEnd/.env.development.local
+/FrontEnd/.env.test.local
+/FrontEnd/.env.production.local
 
 npm-debug.log*
 yarn-debug.log*
